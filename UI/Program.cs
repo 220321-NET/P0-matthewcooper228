@@ -1,5 +1,8 @@
 ﻿// use userinterface namespace
 using UI;
-
-new MainMenu().Start();
+    // greet user
+    Console.WriteLine("");
+    Console.WriteLine("Welcome to Tech Value Electronics Superstore.");
+    Console.WriteLine("By Grabthar's hammer... what a savings.");
+MainMenu.Start();
 

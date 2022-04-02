@@ -1,23 +1,26 @@
 // user interface namespace
 namespace UI;
 // top level menu when program first runs
-public class MainMenu
+public static class MainMenu
 {
-    public void Start()
+    // method to start top level menu
+    public static bool Exit = false;
+    public static void Start()
     {
-        bool exit = false;
-            Console.WriteLine("");
-            Console.WriteLine("Welcome to Tech Value Electronics Superstore.");
-            Console.WriteLine("By Grabthar's hammer... what a savings.");
+        // store whether or not the user has requested to exit
+        // greet user
+        Console.WriteLine("");
+        Console.WriteLine("Welcome to Tech Value Electronics Superstore.");
+        Console.WriteLine("By Grabthar's hammer... what a savings.");
+        // loop main menu until user wants to exit program
         do
         {
             // welcome user and find out if they are customer or employee
-
             Console.WriteLine("");
-            Console.WriteLine("Please make a selection.");
-            Console.WriteLine("[1] I am a customer");
-            Console.WriteLine("[2] I am an employee");
-            Console.WriteLine("[X] Exit");
+            Console.WriteLine("Please make a selection:");
+            Console.WriteLine("[1] I am a customer.");
+            Console.WriteLine("[2] I am an employee.");
+            Console.WriteLine("[X] I want to exit program.");
             Console.WriteLine("");
             // get user's selection
             string? input = Console.ReadLine();
@@ -26,15 +29,19 @@ public class MainMenu
             {
                 case "1":
                     // go to customer menu
+                    CustomerMenu.Start();
                 break;
                 case "2":
                     // go to employee menu
+                    EmployeeMenu.Start();
                 break;
+                case "x":
                 case "X":
                     // exit program
                     Console.WriteLine("");
                     Console.WriteLine("Goodbye");
-                    exit = true;
+                    // customer wants to exit
+                    Exit = true;
                 break;
                 default:
                     // request valid input
@@ -42,6 +49,7 @@ public class MainMenu
                     Console.WriteLine("invalid input, try again");
                 break;
             }
-        } while(!exit);
+        // keep looping main menu while customer does not want to exit
+        } while(!Exit);
     }
 }
