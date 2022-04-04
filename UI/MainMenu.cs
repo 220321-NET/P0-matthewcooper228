@@ -7,11 +7,6 @@ public static class MainMenu
     public static bool Exit = false;
     public static void Start()
     {
-        // store whether or not the user has requested to exit
-        // greet user
-        Console.WriteLine("");
-        Console.WriteLine("Welcome to Tech Value Electronics Superstore.");
-        Console.WriteLine("By Grabthar's hammer... what a savings.");
         // loop main menu until user wants to exit program
         do
         {
