@@ -8,13 +8,20 @@ public class SLBL : ISLBL
     {
         _repo = repo;
     }
-    public List<Customer> GetAllExistingCustomers()
+    public List<Customer> GetAllCustomers()
     {
-        return _repo.GetAllExistingCustomers();
+        return _repo.GetAllCustomers();
+    }
+    public List<Store> GetAllStores()
+    {
+        return _repo.GetAllStores();
+    }
+    public List<Employee> GetAllEmployees()
+    {
+        return _repo.GetAllEmployees();
     }
     public void AddCustomer(Customer customerToAdd)
     {
-
+        _repo.AddCustomer(customerToAdd);
     }
-
 }
