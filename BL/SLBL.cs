@@ -20,6 +20,22 @@ public class SLBL : ISLBL
     {
         return _repo.GetAllEmployees();
     }
+    public List<Product> GetAllProducts()
+    {
+        return _repo.GetAllProducts();
+    }
+    public List<InventoryItem> GetAllInventoryItems()
+    {
+        return _repo.GetAllInventoryItems();
+    }
+    public List<OrderItem> GetAllOrderItems()
+    {
+        return _repo.GetAllOrderItems();
+    }
+    public List<Order> GetAllOrders()
+    {
+        return _repo.GetAllOrders();
+    }
     public void AddCustomer(Customer customerToAdd)
     {
         _repo.AddCustomer(customerToAdd);

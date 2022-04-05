@@ -32,6 +32,8 @@ public class DBRepository : IRepository
             };
             allCustomers.Add(customer);
         }
+        reader.Close();
+        connection.Close();
         return allCustomers;
     }
 
@@ -52,6 +54,8 @@ public class DBRepository : IRepository
             };
             allStores.Add(store);
         }
+        reader.Close();
+        connection.Close();
         return allStores;
     }
     public List<Employee> GetAllEmployees()
@@ -69,6 +73,8 @@ public class DBRepository : IRepository
             };
             allEmployees.Add(employee);
         }
+        reader.Close();
+        connection.Close();
         return allEmployees;
     }
     public List<Product> GetAllProducts()
@@ -90,7 +96,84 @@ public class DBRepository : IRepository
             };
             allProducts.Add(product);
         }
+        reader.Close();
+        connection.Close();
         return allProducts;
+    }
+    public List<InventoryItem> GetAllInventoryItems()
+    {
+        List<InventoryItem> allInventoryItems = new List<InventoryItem>();
+        using SqlConnection connection = new SqlConnection(_connectionString);
+        connection.Open();
+        using SqlCommand cmd = new SqlCommand("SELECT * FROM InventoryItems", connection);
+        using SqlDataReader reader = cmd.ExecuteReader();
+        while(reader.Read())
+        {
+            int id = reader.GetInt32(0);
+            int storeId = reader.GetInt32(1);
+            int productId = reader.GetInt32(2);
+            int quantity = reader.GetInt32(3);
+            InventoryItem inventoryItem = new InventoryItem{
+                Id = id,
+                StoreId = storeId,
+                ProductId = productId,
+                Quantity = quantity
+            };
+            allInventoryItems.Add(inventoryItem);
+        }
+        reader.Close();
+        connection.Close();
+        return allInventoryItems;
+    }
+    public List<OrderItem> GetAllOrderItems()
+    {
+        List<OrderItem> allOrderItems = new List<OrderItem>();
+        using SqlConnection connection = new SqlConnection(_connectionString);
+        connection.Open();
+        using SqlCommand cmd = new SqlCommand("SELECT * FROM OrderItems", connection);
+        using SqlDataReader reader = cmd.ExecuteReader();
+        while(reader.Read())
+        {
+            int id = reader.GetInt32(0);
+            int orderId = reader.GetInt32(1);
+            int productId = reader.GetInt32(2);
+            int quantity = reader.GetInt32(3);
+            OrderItem orderItem = new OrderItem{
+                Id = id,
+                OrderId = orderId,
+                ProductId = productId,
+                Quantity = quantity
+            };
+            allOrderItems.Add(orderItem);
+        }
+        reader.Close();
+        connection.Close();
+        return allOrderItems;   
+    }
+    public List<Order> GetAllOrders()
+    {
+        List<Order> allOrders = new List<Order>();
+        using SqlConnection connection = new SqlConnection(_connectionString);
+        connection.Open();
+        using SqlCommand cmd = new SqlCommand("SELECT * FROM Orders", connection);
+        using SqlDataReader reader = cmd.ExecuteReader();
+        while(reader.Read())
+        {
+            int id = reader.GetInt32(0);
+            int customerId = reader.GetInt32(1);
+            int storeId = reader.GetInt32(2);
+            DateTime datePlaced = reader.GetDateTime(3);
+            Order order = new Order{
+                Id = id,
+                CustomerId = customerId,
+                StoreId = storeId,
+                DatePlaced = datePlaced
+            };
+            allOrders.Add(order);
+        }
+        reader.Close();
+        connection.Close();
+        return allOrders;
     }
     public void AddCustomer(Customer customerToAdd)
     {

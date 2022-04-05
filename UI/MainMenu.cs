@@ -6,11 +6,14 @@ using System.Text.RegularExpressions;
 namespace UI;
 internal class MainMenu
 {
+    public int LoggedInCustomerId = 0;
     public string LoggedInCustomerUserName = "";
     public int LoggedInEmployeeId = 0;
-    public bool isCustomer = false;
-    public bool isEmployee = false;
-    public string currentStoreAddress = "";
+    public bool IsCustomer = false;
+    public bool IsEmployee = false;
+    public int CurrentStoreId = 0;
+    public string CurrentStoreAddress = "";
+
     private readonly ISLBL _bl;
     // dependency injection
     public MainMenu(ISLBL bl)
@@ -96,8 +99,8 @@ internal class MainMenu
                 if(userName != null)
                 {
                     LoggedInCustomerUserName = userName;
-                    isCustomer = true;
-                    isEmployee = false;
+                    IsCustomer = true;
+                    IsEmployee = false;
                     Console.WriteLine("Welcome back, " + userName + ".");
                     bool exit = false;
                     do
@@ -152,8 +155,8 @@ internal class MainMenu
             newCustomer.UserName = newUserName!;
             _bl.AddCustomer(newCustomer);
             LoggedInCustomerUserName = newUserName;
-            isCustomer = true;
-            isEmployee = false;
+            IsCustomer = true;
+            IsEmployee = false;
 
             Console.WriteLine("You have created an account. Welcome, " + newUserName + ".");
 
@@ -183,20 +186,22 @@ internal class MainMenu
             Console.WriteLine("[x] I want to go back.");
             Console.Write("Please type a number or x and then press enter: ");
             string? input = Console.ReadLine();
+            bool inputIsValid = false;
             for (int i = 0; i < allStores.Count; i++)
             {
                 if (input == (i + 1).ToString())
                 {
-                    currentStoreAddress = allStores[i].Address!;
+                    CurrentStoreAddress = allStores[i].Address!;
+                    inputIsValid = true;
                     ProceedToStoreAsCustomer();
-
                 }
             }
             if (input == "x" || input == "X")
             {
+                inputIsValid = true;
                 exit = true;
             }
-            else
+            else if(!inputIsValid)
             {
                 Console.WriteLine("Invalid input, try again.");
             }
@@ -207,7 +212,7 @@ internal class MainMenu
     }
     private void ProceedToStoreAsCustomer()
     {
-        Console.WriteLine("You are shopping at " + currentStoreAddress + ".");
+        Console.WriteLine("You are shopping at " + CurrentStoreAddress + ".");
 
     }
 }
