@@ -3,5 +3,5 @@ namespace Models;
 // class for employee model
 public class Employee
 {
-    
+    public int Id{get; set;}
 }

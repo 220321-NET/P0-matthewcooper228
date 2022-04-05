@@ -1,50 +1,111 @@
-// user interface namespace
+using Models;
+using System.ComponentModel.DataAnnotations;
+using BL;
+using DL;
+
 namespace UI;
-// top level menu when program first runs
-public static class MainMenu
+internal class MainMenu
 {
-    // method to start top level menu
-    public static bool Exit = false;
-    public static void Start()
+    private readonly ISLBL _bl;
+    // dependency injection
+    public MainMenu(ISLBL bl)
     {
-        // loop main menu until user wants to exit program
+        _bl = bl;
+    }
+    public void Start()
+    {
+        
+        bool exit = false;
+        Console.WriteLine("TECH VALUE ELECTRONICS SUPERSTORE");
+        Console.WriteLine("\"By Grabthar's hammer... what a savings.\"");
         do
         {
-            // welcome user and find out if they are customer or employee
-            Console.WriteLine("");
             Console.WriteLine("Please make a selection:");
             Console.WriteLine("[1] I am a customer.");
             Console.WriteLine("[2] I am an employee.");
-            Console.WriteLine("[X] I want to exit program.");
-            Console.WriteLine("");
-            // get user's selection
+            Console.WriteLine("[x] I want to exit program.");
+            Console.Write("Please type a number or x and then press enter: ");
             string? input = Console.ReadLine();
-            // take action based on user's selection
             switch(input)
             {
                 case "1":
-                    // go to customer menu
-                    CustomerMenu.Start();
-                break;
+                    ProceedAsCustomer();
+                    break;
                 case "2":
-                    // go to employee menu
-                    EmployeeMenu.Start();
-                break;
+                    ProceedAsEmployee();
+                    break;
                 case "x":
                 case "X":
-                    // exit program
-                    Console.WriteLine("");
-                    Console.WriteLine("Goodbye");
-                    // customer wants to exit
-                    Exit = true;
-                break;
+                    exit = true;
+                    break;
                 default:
-                    // request valid input
-                    Console.WriteLine("");
-                    Console.WriteLine("invalid input, try again");
-                break;
+                    Console.WriteLine("Invalid input, try again.");
+                    break;
             }
-        // keep looping main menu while customer does not want to exit
-        } while(!Exit);
+        }
+        while (!exit);
+    }
+    // helper methods
+    private void ProceedAsCustomer()
+    {
+        bool exit = false;
+        do
+        {
+            Console.WriteLine("Please make a selection:");
+            Console.WriteLine("[1] I am an existing customer.");
+            Console.WriteLine("[2] I am a new customer.");
+            Console.WriteLine("[x] I want to go back.");
+            Console.Write("Please type a number or x and then press enter: ");
+            string? input = Console.ReadLine();
+            switch(input)
+            {
+                case "1":
+                    ProceedAsExistingCustomer();
+                    break;
+                case "2":
+                    ProceedAsNewCustomer();
+                    break;
+                case "x":
+                case "X":
+                    Console.WriteLine("Never give up, never surrender.");
+                    exit = true;
+                    break;
+                default:
+                    Console.WriteLine("Invalid input, try again.");
+                    break;
+            }
+        }
+        while (!exit);
+    }
+    private void ProceedAsExistingCustomer()
+    {
+        Console.Write("Please enter your username: ");
+        bool customerExists = false;
+        string? userName = Console.ReadLine();
+        List<Customer> allCustomers = _bl.GetAllExistingCustomers();
+        foreach(Customer customerToCheck in allCustomers)
+        {
+            if ( customerToCheck.UserName == userName )
+            {
+                customerExists = true;
+                Console.WriteLine("Welcome back, " + userName + ".");
+                Console.WriteLine("Please make a selection:");
+                Console.WriteLine("");
+
+            }
+        }
+        if(!customerExists)
+        {
+            Console.WriteLine(userName + " is not an existing customer.");
+        }
+
+    }
+    private void ProceedAsNewCustomer()
+    {
+
+    }
+    private void ProceedAsEmployee()
+    {
+
     }
 }

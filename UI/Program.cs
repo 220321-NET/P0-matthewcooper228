@@ -1,13 +1,10 @@
-﻿// use userinterface namespace
-using UI;
+﻿using UI;
 using BL;
 using DL;
 
-DBRepository repo = new DBRepository();
+string connectionString = File.ReadAllText("./connectionString.txt");
 
-// greet user
-Console.WriteLine("");
-Console.WriteLine("Welcome to Tech Value Electronics Superstore.");
-Console.WriteLine("By Grabthar's hammer... what a savings.");
-MainMenu.Start();
-
+// Dependency Injection
+IRepository repo = new DBRepository(connectionString);
+ISLBL bl = new SLBL(repo);
+new MainMenu(bl).Start();

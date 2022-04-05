@@ -3,5 +3,6 @@ namespace Models;
 // class for customer model
 public class Customer
 {
-
+    public int Id {get; set;}
+    public string? UserName {get; set;}
 }
