@@ -12,4 +12,5 @@ public interface ISLBL
     List<OrderItem> GetAllOrderItems();
     List<Order> GetAllOrders();
     void AddCustomer(Customer customerToAdd);
+    void PurchaseItem(int customerId, int storeId, int inventoryItemId, int quantity);
 }

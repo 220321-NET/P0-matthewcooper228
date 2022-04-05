@@ -40,4 +40,8 @@ public class SLBL : ISLBL
     {
         _repo.AddCustomer(customerToAdd);
     }
+    public void PurchaseItem(int customerId, int storeId, int inventoryItemId, int quantity)
+    {
+        _repo.PurchaseItem(customerId, storeId, inventoryItemId, quantity);
+    }
 }

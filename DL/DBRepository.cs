@@ -196,4 +196,28 @@ public class DBRepository : IRepository
         }
         connection.Close();
     }
+    public void PurchaseItem(int customerId, int storeId, int inventoryItemId, int quantity)
+    {
+/*        // check if there is an 
+
+        using SqlConnection connection = new SqlConnection(_connectionString);
+        connection.Open();
+
+        using SqlCommand cmd = new SqlCommand("INSERT INTO Customers(UserName) OUTPUT INSERTED.Id VALUES (@userName)", connection);
+
+        cmd.Parameters.AddWithValue("@userName", customerToAdd.UserName);
+
+        // Risky code, SQL Injection
+        // using SqlCommand cmd2 = new SqlCommand($"INSERT INTO Issues(Title, Content, DateCreated) VALUES ({issueToCreate.Title}, {issueToCreate.Content}, {issueToCreate.DateCreated})", connection);
+        try
+        {
+            customerToAdd.Id = (int) cmd.ExecuteScalar();
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        connection.Close();
+*/
+    }
 }
