@@ -6,13 +6,16 @@ using System.Text.RegularExpressions;
 namespace UI;
 internal class MainMenu
 {
-    public int LoggedInCustomerId = 0;
-    public string LoggedInCustomerUserName = "";
-    public int LoggedInEmployeeId = 0;
+    public int CurrentCustomerId = 0;
+    public string CurrentCustomerUserName = "";
+    public int CurrentEmployeeId = 0;
     public bool IsCustomer = false;
     public bool IsEmployee = false;
     public int CurrentStoreId = 0;
     public string CurrentStoreAddress = "";
+    public int CurrentInventoryItemId = 0;
+    public int CurrentInventoryItemQuantity = 0;
+    public int CurrentProductId = 0;
 
     private readonly ISLBL _bl;
     // dependency injection
@@ -98,7 +101,8 @@ internal class MainMenu
                 customerExists = true;
                 if(userName != null)
                 {
-                    LoggedInCustomerUserName = userName;
+                    CurrentCustomerUserName = userName;
+                    CurrentCustomerId = customerToCheck.Id;
                     IsCustomer = true;
                     IsEmployee = false;
                     Console.WriteLine("Welcome back, " + userName + ".");
@@ -154,7 +158,15 @@ internal class MainMenu
             Customer newCustomer = new Customer();
             newCustomer.UserName = newUserName!;
             _bl.AddCustomer(newCustomer);
-            LoggedInCustomerUserName = newUserName;
+            List<Customer> allCustomers = _bl.GetAllCustomers();
+            foreach(Customer customer in allCustomers)
+            {
+                if(customer.UserName == newCustomer.UserName)
+                {
+                    CurrentCustomerId = customer.Id;
+                    CurrentCustomerUserName = customer.UserName;
+                }
+            }
             IsCustomer = true;
             IsEmployee = false;
 
@@ -192,6 +204,7 @@ internal class MainMenu
                 if (input == (i + 1).ToString())
                 {
                     CurrentStoreAddress = allStores[i].Address!;
+                    CurrentStoreId = allStores[i].Id;
                     inputIsValid = true;
                     ProceedToStoreAsCustomer();
                 }
@@ -213,6 +226,88 @@ internal class MainMenu
     private void ProceedToStoreAsCustomer()
     {
         Console.WriteLine("You are shopping at " + CurrentStoreAddress + ".");
+        bool exit = false;
+        do
+        {
+            Console.WriteLine("Please make a selection:");
+            List<InventoryItem> inventoryItems = _bl.GetAllInventoryItems();
+            List<Product> products = _bl.GetAllProducts();
+            for( int i = 0; i < inventoryItems.Count; i++ )
+            {
+                if(inventoryItems[i].StoreId == CurrentStoreId)
+                {
+                    foreach (Product product in products)
+                    {
+                        if (product.Id == inventoryItems[i].ProductId)
+                        {
+                            Console.WriteLine("[" + (i + 1) + "]" + " I want to add " + product.Name + "s to my order (there are " + inventoryItems[i].Quantity + " available).");
+                        }
+                    }
+                }
+            }
+            Console.WriteLine("[x] I am finished with my order and want to go back.");
+            Console.Write("Please type a number or x and then press enter: ");
+            string? input = Console.ReadLine();
+            bool inputIsValid = false;
+            for (int i = 0; i < inventoryItems.Count; i++)
+            {
+                if (input == (i + 1).ToString())
+                {
+                    inputIsValid = true;
+                    CurrentInventoryItemId = inventoryItems[i].Id;
+                    foreach (Product product in products)
+                    {
+                        if (product.Id == inventoryItems[i].ProductId)
+                        {
+                            CurrentProductId = product.Id;
+                        }
+                    }
+                    ProceedToAddInventoryItemToOrder();
+                }
+            }
+            if (input == "x" || input == "X")
+            {
+                inputIsValid = true;
+                exit = true;
+            }
+            else if(!inputIsValid)
+            {
+                Console.WriteLine("Invalid input, try again.");
+            }
+
+        } while (!exit);            
+    }
+    private void ProceedToAddInventoryItemToOrder()
+    {
+        ProceedToAddInventoryItemToOrder:
+        List<Product> products = _bl.GetAllProducts();
+        List<InventoryItem> inventoryItems = _bl.GetAllInventoryItems();
+        foreach(InventoryItem inventoryItem in inventoryItems)
+        {
+            foreach (Product product in products)
+            {
+                if (product.Id == CurrentProductId && inventoryItem.Id == CurrentInventoryItemId)
+                {
+                    CurrentInventoryItemQuantity = inventoryItem.Quantity;
+                    Console.WriteLine("How many " + product.Name + "s do you want to add to your order (there are " + inventoryItem.Quantity + " available)?");
+                    Console.Write("Please enter a number between 0 and " + inventoryItem.Quantity + ": ");
+                }
+            }
+        }
+        string? input = Console.ReadLine();
+        if (input == null)
+        {
+            Console.WriteLine("Invalid input, try again.");
+            goto ProceedToAddInventoryItemToOrder;
+        }
+        string pattern = @"^[0-9]+$";
+        if (!Regex.Match(input, pattern).Success)
+        {
+            Console.WriteLine("Invalid input, try again.");
+            goto ProceedToAddInventoryItemToOrder;
+        }
+        int quantityPurchasing = Int32.Parse(input);
 
     }
+
 }
