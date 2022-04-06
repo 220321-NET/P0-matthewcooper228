@@ -2,6 +2,7 @@ using Models;
 using System.ComponentModel.DataAnnotations;
 using BL;
 using System.Text.RegularExpressions;
+using Microsoft.Data.SqlClient;
 
 namespace UI;
 internal class MainMenu
@@ -25,10 +26,9 @@ internal class MainMenu
         _bl = bl;
     }
     public void Start()
-    {      
+    {   
         bool exit = false;
-        Console.WriteLine("TECH VALUE ELECTRONICS SUPERSTORE");
-        Console.WriteLine("\"By Grabthar's hammer... what a savings.\"");
+        Console.WriteLine("Circuits Store");
         do
         {
             Console.WriteLine("Please make a selection:");
@@ -47,7 +47,7 @@ internal class MainMenu
                     break;
                 case "x":
                 case "X":
-                    Console.WriteLine("\"Never give up, never surrender.\"");
+                    Console.WriteLine("Goodbye");
                     exit = true;
                     break;
                 default:
@@ -221,7 +221,6 @@ internal class MainMenu
         } while (!exit);
     }
     private void ProceedToViewOrderHistoryAsCutomer() {
-
     }
     private void ProceedToStoreAsCustomer()
     {
@@ -279,7 +278,7 @@ internal class MainMenu
         bool exit = false;
         do
         {
-            Console.WriteLine("What would you like to add to your oder:");
+            Console.WriteLine("What would you like to add to your order:");
             List<InventoryItem> inventoryItems = _bl.GetAllInventoryItems();
             List<Product> products = _bl.GetAllProducts();
             for( int i = 0; i < inventoryItems.Count; i++ )
@@ -349,7 +348,9 @@ internal class MainMenu
                             newOrderItem.ProductId = CurrentProductId;
                             newOrderItem.Quantity = Int32.Parse(input);
                             _bl.AddNewOrderItem(newOrderItem);
-                            Console.WriteLine(input + " " + products[j].Name + " have been to your order." );
+                            _bl.DecrementInventoryItems(CurrentInventoryItemId, Int32.Parse(input));
+                            Console.WriteLine(input + " " + products[j].Name + " have been added to your order." );
+                            exit = true;
                         }
                         else
                         {

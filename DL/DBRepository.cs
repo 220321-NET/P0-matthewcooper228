@@ -11,6 +11,7 @@ public class DBRepository : IRepository
     {
         _connectionString = connectionString;
     }
+
     /// <summary>
     /// Returns a list of all existing customers
     /// </summary>
@@ -225,6 +226,16 @@ public class DBRepository : IRepository
         {
             Console.WriteLine(e.Message);
         }
+        connection.Close();
+    }
+    public void DecrementInventoryItems(int inventoryItemId, int quantity)
+    {
+        using SqlConnection connection = new SqlConnection(_connectionString);
+        connection.Open();
+        using SqlCommand cmd = new SqlCommand("UPDATE InventoryItems SET Quantity = Quantity - @quantity WHERE Id = @inventoryItemId", connection);
+        cmd.Parameters.AddWithValue("@quantity", quantity);
+        cmd.Parameters.AddWithValue("@inventoryItemId", inventoryItemId);
+        cmd.ExecuteNonQuery();
         connection.Close();
     }
 }

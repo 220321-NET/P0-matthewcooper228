@@ -5,6 +5,7 @@ namespace DL;
 /// </summary>
 public interface IRepository
 {
+
     public List<Customer> GetAllCustomers();
     public List<Store> GetAllStores();
     public List<Employee> GetAllEmployees();
@@ -15,5 +16,7 @@ public interface IRepository
     void AddCustomer(Customer customerToAdd);
     void AddNewOrder(Order newOrder);
     void AddNewOrderItem(OrderItem newOrderItem);
+    void DecrementInventoryItems(int inventoryItemId, int quantity);
+
 }
 

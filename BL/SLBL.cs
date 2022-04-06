@@ -3,6 +3,7 @@ using Models;
 namespace BL;
 public class SLBL : ISLBL
 {
+    
     private readonly IRepository _repo;
     public SLBL(IRepository repo)
     {
@@ -36,6 +37,7 @@ public class SLBL : ISLBL
     {
         return _repo.GetAllOrders();
     }
+
     public void AddCustomer(Customer customerToAdd)
     {
         _repo.AddCustomer(customerToAdd);
@@ -47,5 +49,9 @@ public class SLBL : ISLBL
     public void AddNewOrderItem(OrderItem newOrderItem)
     {
         _repo.AddNewOrderItem(newOrderItem);
+    }
+    public void DecrementInventoryItems(int inventoryItemId, int quantity)
+    {
+        _repo.DecrementInventoryItems(inventoryItemId, quantity);
     }
 }
