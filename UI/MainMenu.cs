@@ -16,6 +16,7 @@ internal class MainMenu
     public int CurrentInventoryItemId = 0;
     public int CurrentInventoryItemQuantity = 0;
     public int CurrentProductId = 0;
+    public int CurrentOrderId = 0;
 
     private readonly ISLBL _bl;
     // dependency injection
@@ -24,8 +25,7 @@ internal class MainMenu
         _bl = bl;
     }
     public void Start()
-    {
-        
+    {      
         bool exit = false;
         Console.WriteLine("TECH VALUE ELECTRONICS SUPERSTORE");
         Console.WriteLine("\"By Grabthar's hammer... what a savings.\"");
@@ -34,8 +34,8 @@ internal class MainMenu
             Console.WriteLine("Please make a selection:");
             Console.WriteLine("[1] I am a customer.");
             Console.WriteLine("[2] I am an employee.");
-            Console.WriteLine("[x] I want to exit program.");
-            Console.Write("Please type a number or x and then press enter: ");
+            Console.WriteLine("[X] I want to exit program.");
+            Console.Write("Please type a number or X and then press enter: ");
             string? input = Console.ReadLine();
             switch(input)
             {
@@ -66,8 +66,8 @@ internal class MainMenu
             Console.WriteLine("Please make a selection:");
             Console.WriteLine("[1] I am an existing customer.");
             Console.WriteLine("[2] I am a new customer.");
-            Console.WriteLine("[x] I want to go back.");
-            Console.Write("Please type a number or x and then press enter: ");
+            Console.WriteLine("[X] I want to go back.");
+            Console.Write("Please type a number or X and then press enter: ");
             string? input = Console.ReadLine();
             switch(input)
             {
@@ -112,8 +112,8 @@ internal class MainMenu
                         Console.WriteLine("Please make a selection:");
                         Console.WriteLine("[1] I want to shop.");
                         Console.WriteLine("[2] I want to see my order history.");
-                        Console.WriteLine("[x] I want to go back.");
-                        Console.Write("Please type a number or x and then press enter: ");
+                        Console.WriteLine("[X] I want to go back.");
+                        Console.Write("Please type a number or X and then press enter: ");
                         string? input = Console.ReadLine();
                         switch(input)
                         {
@@ -170,7 +170,7 @@ internal class MainMenu
             IsCustomer = true;
             IsEmployee = false;
 
-            Console.WriteLine("You have created an account. Welcome, " + newUserName + ".");
+            Console.WriteLine("You have created an account as " + newUserName + ". Please login as an existing user.");
 
         } 
         else
@@ -195,8 +195,8 @@ internal class MainMenu
             {
                 Console.WriteLine("[" + (i + 1) + "] I want to shop at " + allStores[i].Address + ".");
             }
-            Console.WriteLine("[x] I want to go back.");
-            Console.Write("Please type a number or x and then press enter: ");
+            Console.WriteLine("[X] I want to go back.");
+            Console.Write("Please type a number or X and then press enter: ");
             string? input = Console.ReadLine();
             bool inputIsValid = false;
             for (int i = 0; i < allStores.Count; i++)
@@ -229,7 +229,57 @@ internal class MainMenu
         bool exit = false;
         do
         {
-            Console.WriteLine("Please make a selection:");
+            Console.WriteLine("Here is what we have:");
+            List<InventoryItem> inventoryItems = _bl.GetAllInventoryItems();
+            List<Product> products = _bl.GetAllProducts();
+            for( int i = 0; i < inventoryItems.Count; i++ )
+            {
+                if(inventoryItems[i].StoreId == CurrentStoreId)
+                {
+                    foreach (Product product in products)
+                    {
+                        if (product.Id == inventoryItems[i].ProductId)
+                        {
+                            Console.WriteLine("- " + product.Name + " (there are " + inventoryItems[i].Quantity + " available)");
+                        }
+                    }
+                }
+            }
+            Console.WriteLine("[N] I want to start an order");
+            Console.WriteLine("[X] I want to go back.");
+            Console.Write("Please type N or X and then press enter: ");
+            string? input = Console.ReadLine();
+            if (input == "x" || input == "X")
+            {
+                exit = true;
+            } else if (input == "N" || input == "n")
+            {
+                Order newOrder = new Order();
+                newOrder.CustomerId = CurrentCustomerId;
+                newOrder.StoreId = CurrentStoreId;
+                newOrder.DatePlaced = DateTime.Now;
+                _bl.AddNewOrder(newOrder);
+                List<Order> orders = _bl.GetAllOrders();
+                for(int i = 0; i < orders.Count; i++ )
+                {
+                    if(orders[i].DatePlaced.ToString() == newOrder.DatePlaced.ToString())
+                    {
+                        CurrentOrderId = orders[i].Id;
+                    }
+                }
+                ProceedToPurchaseAsACustomer();
+            }
+            else {
+                Console.WriteLine("Invalid input, try again.");
+            }
+        } while (!exit);            
+    }
+    private void ProceedToPurchaseAsACustomer()
+    {
+        bool exit = false;
+        do
+        {
+            Console.WriteLine("What would you like to add to your oder:");
             List<InventoryItem> inventoryItems = _bl.GetAllInventoryItems();
             List<Product> products = _bl.GetAllProducts();
             for( int i = 0; i < inventoryItems.Count; i++ )
@@ -245,69 +295,70 @@ internal class MainMenu
                     }
                 }
             }
-            Console.WriteLine("[x] I am finished with my order and want to go back.");
-            Console.Write("Please type a number or x and then press enter: ");
+            Console.WriteLine("[X] I want to complete my order and go back.");
+            Console.Write("Please type a number or X and then press enter: ");
             string? input = Console.ReadLine();
-            bool inputIsValid = false;
-            for (int i = 0; i < inventoryItems.Count; i++)
+            if (input == "x" || input == "X")
             {
-                if (input == (i + 1).ToString())
+                exit = true;
+            }
+            for( int i = 0; i < inventoryItems.Count; i++ )
+            {
+                if(inventoryItems[i].StoreId == CurrentStoreId)
                 {
-                    inputIsValid = true;
-                    CurrentInventoryItemId = inventoryItems[i].Id;
                     foreach (Product product in products)
                     {
                         if (product.Id == inventoryItems[i].ProductId)
                         {
-                            CurrentProductId = product.Id;
+                            if (input == (i + 1).ToString())
+                            {
+                                CurrentInventoryItemId = inventoryItems[i].Id;
+                                CurrentProductId = product.Id;
+                                ProceedToAddItemAsACustomer();
+                            }
                         }
                     }
-                    ProceedToAddInventoryItemToOrder();
                 }
             }
-            if (input == "x" || input == "X")
-            {
-                inputIsValid = true;
-                exit = true;
-            }
-            else if(!inputIsValid)
-            {
-                Console.WriteLine("Invalid input, try again.");
-            }
-
         } while (!exit);            
     }
-    private void ProceedToAddInventoryItemToOrder()
+    public void ProceedToAddItemAsACustomer()
     {
-        ProceedToAddInventoryItemToOrder:
         List<Product> products = _bl.GetAllProducts();
         List<InventoryItem> inventoryItems = _bl.GetAllInventoryItems();
-        foreach(InventoryItem inventoryItem in inventoryItems)
+        for(int i = 0; i < inventoryItems.Count; i++)
         {
-            foreach (Product product in products)
+            for(int j = 0; j < products.Count; j++)
             {
-                if (product.Id == CurrentProductId && inventoryItem.Id == CurrentInventoryItemId)
+                if (products[j].Id == CurrentProductId && inventoryItems[i].ProductId == CurrentProductId && inventoryItems[i].StoreId == CurrentStoreId)
                 {
-                    CurrentInventoryItemQuantity = inventoryItem.Quantity;
-                    Console.WriteLine("How many " + product.Name + "s do you want to add to your order (there are " + inventoryItem.Quantity + " available)?");
-                    Console.Write("Please enter a number between 0 and " + inventoryItem.Quantity + ": ");
+                    bool exit = false;
+                    do
+                    {
+                        Console.WriteLine("How many " + products[j].Name + "s do you want (there are " + inventoryItems[i].Quantity + ")?");
+                        Console.Write("Enter a number between 0 and " + inventoryItems[i].Quantity + ": ");
+                        string? input = Console.ReadLine();
+                        if(input == null)
+                        {
+                            Console.WriteLine("Invalid input, try again.");
+                        }
+                        else if(Regex.IsMatch(input, @"^[0-9]+$") && 0 <= Int32.Parse(input) && Int32.Parse(input) <= inventoryItems[i].Quantity)
+                        {
+                            OrderItem newOrderItem = new OrderItem();
+                            newOrderItem.OrderId = CurrentOrderId;
+                            newOrderItem.ProductId = CurrentProductId;
+                            newOrderItem.Quantity = Int32.Parse(input);
+                            _bl.AddNewOrderItem(newOrderItem);
+                            Console.WriteLine(input + " " + products[j].Name + " have been to your order." );
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid input, try again.");
+                        }
+                    }
+                    while(!exit);
                 }
             }
         }
-        string? input = Console.ReadLine();
-        if (input == null)
-        {
-            Console.WriteLine("Invalid input, try again.");
-            goto ProceedToAddInventoryItemToOrder;
-        }
-        string pattern = @"^[0-9]+$";
-        if (!Regex.Match(input, pattern).Success)
-        {
-            Console.WriteLine("Invalid input, try again.");
-            goto ProceedToAddInventoryItemToOrder;
-        }
-        int quantityPurchasing = Int32.Parse(input);
-
     }
-
 }

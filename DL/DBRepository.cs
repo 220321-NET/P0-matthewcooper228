@@ -179,13 +179,8 @@ public class DBRepository : IRepository
     {
         using SqlConnection connection = new SqlConnection(_connectionString);
         connection.Open();
-
         using SqlCommand cmd = new SqlCommand("INSERT INTO Customers(UserName) OUTPUT INSERTED.Id VALUES (@userName)", connection);
-
         cmd.Parameters.AddWithValue("@userName", customerToAdd.UserName);
-
-        // Risky code, SQL Injection
-        // using SqlCommand cmd2 = new SqlCommand($"INSERT INTO Issues(Title, Content, DateCreated) VALUES ({issueToCreate.Title}, {issueToCreate.Content}, {issueToCreate.DateCreated})", connection);
         try
         {
             customerToAdd.Id = (int) cmd.ExecuteScalar();
@@ -196,28 +191,40 @@ public class DBRepository : IRepository
         }
         connection.Close();
     }
-    public void PurchaseItem(int customerId, int storeId, int inventoryItemId, int quantity)
+    public void AddNewOrder(Order newOrder)
     {
-/*        // check if there is an 
-
         using SqlConnection connection = new SqlConnection(_connectionString);
         connection.Open();
-
-        using SqlCommand cmd = new SqlCommand("INSERT INTO Customers(UserName) OUTPUT INSERTED.Id VALUES (@userName)", connection);
-
-        cmd.Parameters.AddWithValue("@userName", customerToAdd.UserName);
-
-        // Risky code, SQL Injection
-        // using SqlCommand cmd2 = new SqlCommand($"INSERT INTO Issues(Title, Content, DateCreated) VALUES ({issueToCreate.Title}, {issueToCreate.Content}, {issueToCreate.DateCreated})", connection);
+        using SqlCommand cmd = new SqlCommand("INSERT INTO Orders(CustomerId, StoreId, DatePlaced) OUTPUT INSERTED.Id VALUES (@customerId, @storeId, @datePlaced)", connection);
+        cmd.Parameters.AddWithValue("@customerId", newOrder.CustomerId);
+        cmd.Parameters.AddWithValue("@storeId", newOrder.StoreId);
+        cmd.Parameters.AddWithValue("@datePlaced", newOrder.DatePlaced);
         try
         {
-            customerToAdd.Id = (int) cmd.ExecuteScalar();
+            newOrder.Id = (int) cmd.ExecuteScalar();
         }
         catch(Exception e)
         {
             Console.WriteLine(e.Message);
         }
         connection.Close();
-*/
+    }
+    public void AddNewOrderItem(OrderItem newOrderItem)
+    {
+        using SqlConnection connection = new SqlConnection(_connectionString);
+        connection.Open();
+        using SqlCommand cmd = new SqlCommand("INSERT INTO OrderItems(OrderId, ProductId, Quantity) OUTPUT INSERTED.Id VALUES (@orderId, @productId, @quantity)", connection);
+        cmd.Parameters.AddWithValue("@orderId", newOrderItem.OrderId);
+        cmd.Parameters.AddWithValue("@productId", newOrderItem.ProductId);
+        cmd.Parameters.AddWithValue("@quantity", newOrderItem.Quantity);
+        try
+        {
+            newOrderItem.Id = (int) cmd.ExecuteScalar();
+        }
+        catch(Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        connection.Close();
     }
 }

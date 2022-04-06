@@ -13,6 +13,7 @@ public interface IRepository
     public List<OrderItem> GetAllOrderItems();
     public List<Order> GetAllOrders();
     void AddCustomer(Customer customerToAdd);
-    void PurchaseItem(int customerId, int storeId, int inventoryItemId, int quantity);
+    void AddNewOrder(Order newOrder);
+    void AddNewOrderItem(OrderItem newOrderItem);
 }
 
